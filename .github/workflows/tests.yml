@@ -1,0 +1,26 @@
+name: test-contracts
+
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "develop"
+      - /^feature.*/
+      - /^hotfix.*/
+      - /^fix.*/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn install && yarn run test
+        env:
+          GOERLI_URL: ${{ secrets.GOERLI_URL}}
+          MUAMBAI_URL: ${{ secrets.MUAMBAI_URL }}
+          PRIVATE_KEY: ${{ secrets.PRIV_KEY }}
+          PRIVATE_KEY_2: ${{ secrets.PRIV_KEY_2 }}
+          REPORT_GAS: true
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_KEY }}
+          VERIFY_CONTRACT: false
+          COINMARKETCAP_API_KEY: ${{ secrets.COINMARKETCAP_KEY }}
