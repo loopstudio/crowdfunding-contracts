@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @title Crowdfunding
 /// @author @loopstudio
-/// @notice Contract for campaings fundraising
-/// @dev Contract that enables to raise funds using ERC20 tokens. Campaings pledged amount can be claimed if
+/// @notice Contract for campaigns fundraising
+/// @dev Contract that enables to raise funds using ERC20 tokens. campaigns pledged amount can be claimed if
 //  goal is met on the defined period of time. Otherwhise, the funds should be refunded.
 contract Crowdfunding {
     /// @dev Using SafeERC20 to eliminates the need to handle boolean return values for ERC20 methods (i.e transfer)
@@ -25,7 +25,7 @@ contract Crowdfunding {
     event Refund();
 
     /// @notice object that reprents a campaign
-    struct Campaing {
+    struct Campaign {
         address creator;
         uint256 goalAmount;
         uint256 pledgedAmount;
@@ -34,24 +34,27 @@ contract Crowdfunding {
         bool claimed;
     }
 
-    /// @notice Token in which funds will be raised for each campaing
+    /// @notice Token in which funds will be raised for each campaign
     /// @dev Tokens must be ERC20 compliant
     IERC20 public immutable token;
-    /// @dev Counter for storage of Campaing ids
+    /// @dev Counter for storage of campaign ids
     Counters.Counter private idCounter;
     /// @dev Mapping that stores the campaigns by their id
-    mapping(uint256 => Campaing) public idsToCampaing;
-    /// @dev timestamp that that represents the max period for a campaign. I.e 60 days
-    uint64 public immutable maxCampaingPeriod;
+    mapping(uint256 => Campaign) public idsTocampaign;
+    /// @dev timestamp = that represents the max period for a campaign. I.e 60 days
+    uint64 public immutable maxCampaignPeriodInDays;
 
     /// @dev Contract constructor
     /// @param _token ERC20 token address
-    /// @param _maxCampaingPeriod timestamp that represents the max period for a campaign.
-    constructor(address _token, uint64 _maxCampaingPeriod) {
+    /// @param __maxCampaignPeriodInDays timestamp that represents the max period for a campaign.
+    constructor(address _token, uint64 __maxCampaignPeriodInDays) {
         require(_token != address(0), "ERC20 address cannot be zero");
-        require(_maxCampaingPeriod > 0, "Period should be greater than zero");
+        require(
+            __maxCampaignPeriodInDays > 0,
+            "Period should be greater than zero"
+        );
         token = IERC20(_token);
-        maxCampaingPeriod = _maxCampaingPeriod;
+        maxCampaignPeriodInDays = __maxCampaignPeriodInDays;
     }
 
     function launch() external {}
