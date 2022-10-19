@@ -19,7 +19,7 @@ describe("Crowdfunding", function () {
 
   describe("constructor", async function () {
     it("Should set max campaign period and token address", async () => {
-      expect(await crowdfunding.maxCampaingPeriod()).to.be.greaterThan(
+      expect(await crowdfunding.maxCampaignPeriodInDays()).to.be.greaterThan(
         ethers.constants.Zero
       );
       expect(await crowdfunding.token()).to.be.not.null;
