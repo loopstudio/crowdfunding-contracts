@@ -9,7 +9,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  const chainId = network.config.chainId || 31337;
+  const HARDHAT_NETWORK_ID = 31337;
+  const chainId = network.config.chainId || HARDHAT_NETWORK_ID;
   const currentNetworkConfig = networkConfig[chainId];
 
   if (!currentNetworkConfig) {

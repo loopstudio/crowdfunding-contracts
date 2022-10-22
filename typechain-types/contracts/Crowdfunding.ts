@@ -31,9 +31,9 @@ export interface CrowdfundingInterface extends utils.Interface {
   functions: {
     "cancel()": FunctionFragment;
     "claim()": FunctionFragment;
-    "idsTocampaign(uint256)": FunctionFragment;
+    "idsToCampaign(uint256)": FunctionFragment;
     "launch()": FunctionFragment;
-    "maxCampaignPeriodInDays()": FunctionFragment;
+    "maxCampaignDurationInDays()": FunctionFragment;
     "refund()": FunctionFragment;
     "token()": FunctionFragment;
   };
@@ -42,9 +42,9 @@ export interface CrowdfundingInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "cancel"
       | "claim"
-      | "idsTocampaign"
+      | "idsToCampaign"
       | "launch"
-      | "maxCampaignPeriodInDays"
+      | "maxCampaignDurationInDays"
       | "refund"
       | "token"
   ): FunctionFragment;
@@ -52,12 +52,12 @@ export interface CrowdfundingInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "cancel", values?: undefined): string;
   encodeFunctionData(functionFragment: "claim", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "idsTocampaign",
+    functionFragment: "idsToCampaign",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "launch", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "maxCampaignPeriodInDays",
+    functionFragment: "maxCampaignDurationInDays",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "refund", values?: undefined): string;
@@ -66,12 +66,12 @@ export interface CrowdfundingInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "idsTocampaign",
+    functionFragment: "idsToCampaign",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "launch", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "maxCampaignPeriodInDays",
+    functionFragment: "maxCampaignDurationInDays",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
@@ -154,7 +154,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    idsTocampaign(
+    idsToCampaign(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -172,7 +172,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    maxCampaignPeriodInDays(overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxCampaignDurationInDays(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     refund(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -189,7 +189,7 @@ export interface Crowdfunding extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  idsTocampaign(
+  idsToCampaign(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
@@ -207,7 +207,7 @@ export interface Crowdfunding extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  maxCampaignPeriodInDays(overrides?: CallOverrides): Promise<BigNumber>;
+  maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
   refund(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -220,7 +220,7 @@ export interface Crowdfunding extends BaseContract {
 
     claim(overrides?: CallOverrides): Promise<void>;
 
-    idsTocampaign(
+    idsToCampaign(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -236,7 +236,7 @@ export interface Crowdfunding extends BaseContract {
 
     launch(overrides?: CallOverrides): Promise<void>;
 
-    maxCampaignPeriodInDays(overrides?: CallOverrides): Promise<BigNumber>;
+    maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
     refund(overrides?: CallOverrides): Promise<void>;
 
@@ -269,7 +269,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    idsTocampaign(
+    idsToCampaign(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -278,7 +278,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    maxCampaignPeriodInDays(overrides?: CallOverrides): Promise<BigNumber>;
+    maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
     refund(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -296,7 +296,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    idsTocampaign(
+    idsToCampaign(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -305,7 +305,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    maxCampaignPeriodInDays(
+    maxCampaignDurationInDays(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

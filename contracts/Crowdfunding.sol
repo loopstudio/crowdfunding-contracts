@@ -40,21 +40,21 @@ contract Crowdfunding {
     /// @dev Counter for storage of campaign ids
     Counters.Counter private idCounter;
     /// @dev Mapping that stores the campaigns by their id
-    mapping(uint256 => Campaign) public idsTocampaign;
-    /// @dev timestamp = that represents the max period for a campaign. I.e 60 days
-    uint64 public immutable maxCampaignPeriodInDays;
+    mapping(uint256 => Campaign) public idsToCampaign;
+    /// @dev timestamp = that represents the max duration for a campaign. I.e 60 days
+    uint64 public immutable maxCampaignDurationInDays;
 
     /// @dev Contract constructor
     /// @param _token ERC20 token address
-    /// @param __maxCampaignPeriodInDays timestamp that represents the max period for a campaign.
-    constructor(address _token, uint64 __maxCampaignPeriodInDays) {
+    /// @param _maxCampaignDurationInDays timestamp that represents the max duration for a campaign.
+    constructor(address _token, uint64 _maxCampaignDurationInDays) {
         require(_token != address(0), "ERC20 address cannot be zero");
         require(
-            __maxCampaignPeriodInDays > 0,
-            "Period should be greater than zero"
+            _maxCampaignDurationInDays > 0,
+            "Duration must be greater than zero"
         );
         token = IERC20(_token);
-        maxCampaignPeriodInDays = __maxCampaignPeriodInDays;
+        maxCampaignDurationInDays = _maxCampaignDurationInDays;
     }
 
     function launch() external {}
