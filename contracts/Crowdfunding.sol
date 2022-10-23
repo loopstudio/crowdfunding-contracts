@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "hardhat/console.sol";
 
 /// @title Crowdfunding
 /// @author @loopstudio
@@ -15,10 +16,15 @@ contract Crowdfunding {
     /// @dev Using Counters to restrict id increments by 1
     using Counters for Counters.Counter;
 
-    event Launch();
-    /// @notice Explain to an end user what this does
-    /// @dev Explain to a developer any extra details
-    /// @param id a parameter just like in doxygen (must be followed by parameter name)
+    /// @dev Event emited when Campaign launch succeeds
+    event Launch(
+        uint256 id,
+        uint256 goal,
+        address indexed creator,
+        uint64 startDate,
+        uint64 endDate
+    );
+
     event Cancel(uint256 id);
     event Pledge();
     event Claim();
@@ -40,7 +46,7 @@ contract Crowdfunding {
     /// @dev Counter for storage of campaign ids
     Counters.Counter private idCounter;
     /// @dev Mapping that stores the campaigns by their id
-    mapping(uint256 => Campaign) public idsToCampaign;
+    mapping(uint256 => Campaign) public idsToCampaigns;
     /// @dev timestamp = that represents the max duration for a campaign. I.e 60 days
     uint64 public immutable maxCampaignDurationInDays;
 
@@ -57,7 +63,35 @@ contract Crowdfunding {
         maxCampaignDurationInDays = _maxCampaignDurationInDays;
     }
 
-    function launch() external {}
+    function launch(
+        uint256 _goalAmount,
+        uint64 _startDate,
+        uint64 _endDate
+    ) external returns (uint256 id) {
+        console.log("Timestamp", block.timestamp);
+        require(_goalAmount > 0, "Goal must be gt 0");
+        require(_startDate >= block.timestamp, "Start must be gte now");
+        require(_endDate > _startDate, "End date must be gt start date");
+        require(
+            _endDate - _startDate <= maxCampaignDurationInDays,
+            "Duration exceeds maximum"
+        );
+
+        idCounter.increment();
+        uint256 campaignId = idCounter.current();
+
+        idsToCampaigns[campaignId] = Campaign({
+            creator: msg.sender,
+            goalAmount: _goalAmount,
+            pledgedAmount: 0,
+            startDate: _startDate,
+            endDate: _endDate,
+            claimed: false
+        });
+
+        emit Launch(campaignId, _goalAmount, msg.sender, _startDate, _endDate);
+        return campaignId;
+    }
 
     function cancel() external {}
 

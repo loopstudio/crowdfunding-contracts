@@ -31,8 +31,8 @@ export interface CrowdfundingInterface extends utils.Interface {
   functions: {
     "cancel()": FunctionFragment;
     "claim()": FunctionFragment;
-    "idsToCampaign(uint256)": FunctionFragment;
-    "launch()": FunctionFragment;
+    "idsToCampaigns(uint256)": FunctionFragment;
+    "launch(uint256,uint64,uint64)": FunctionFragment;
     "maxCampaignDurationInDays()": FunctionFragment;
     "refund()": FunctionFragment;
     "token()": FunctionFragment;
@@ -42,7 +42,7 @@ export interface CrowdfundingInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "cancel"
       | "claim"
-      | "idsToCampaign"
+      | "idsToCampaigns"
       | "launch"
       | "maxCampaignDurationInDays"
       | "refund"
@@ -52,10 +52,17 @@ export interface CrowdfundingInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "cancel", values?: undefined): string;
   encodeFunctionData(functionFragment: "claim", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "idsToCampaign",
+    functionFragment: "idsToCampaigns",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "launch", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "launch",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "maxCampaignDurationInDays",
     values?: undefined
@@ -66,7 +73,7 @@ export interface CrowdfundingInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "idsToCampaign",
+    functionFragment: "idsToCampaigns",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "launch", data: BytesLike): Result;
@@ -80,7 +87,7 @@ export interface CrowdfundingInterface extends utils.Interface {
   events: {
     "Cancel(uint256)": EventFragment;
     "Claim()": EventFragment;
-    "Launch()": EventFragment;
+    "Launch(uint256,uint256,address,uint64,uint64)": EventFragment;
     "Pledge()": EventFragment;
     "Refund()": EventFragment;
   };
@@ -104,8 +111,17 @@ export type ClaimEvent = TypedEvent<[], ClaimEventObject>;
 
 export type ClaimEventFilter = TypedEventFilter<ClaimEvent>;
 
-export interface LaunchEventObject {}
-export type LaunchEvent = TypedEvent<[], LaunchEventObject>;
+export interface LaunchEventObject {
+  id: BigNumber;
+  goal: BigNumber;
+  creator: string;
+  startDate: BigNumber;
+  endDate: BigNumber;
+}
+export type LaunchEvent = TypedEvent<
+  [BigNumber, BigNumber, string, BigNumber, BigNumber],
+  LaunchEventObject
+>;
 
 export type LaunchEventFilter = TypedEventFilter<LaunchEvent>;
 
@@ -154,7 +170,7 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    idsToCampaign(
+    idsToCampaigns(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -169,6 +185,9 @@ export interface Crowdfunding extends BaseContract {
     >;
 
     launch(
+      _goalAmount: PromiseOrValue<BigNumberish>,
+      _startDate: PromiseOrValue<BigNumberish>,
+      _endDate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -189,7 +208,7 @@ export interface Crowdfunding extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  idsToCampaign(
+  idsToCampaigns(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
@@ -204,6 +223,9 @@ export interface Crowdfunding extends BaseContract {
   >;
 
   launch(
+    _goalAmount: PromiseOrValue<BigNumberish>,
+    _startDate: PromiseOrValue<BigNumberish>,
+    _endDate: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -220,7 +242,7 @@ export interface Crowdfunding extends BaseContract {
 
     claim(overrides?: CallOverrides): Promise<void>;
 
-    idsToCampaign(
+    idsToCampaigns(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -234,7 +256,12 @@ export interface Crowdfunding extends BaseContract {
       }
     >;
 
-    launch(overrides?: CallOverrides): Promise<void>;
+    launch(
+      _goalAmount: PromiseOrValue<BigNumberish>,
+      _startDate: PromiseOrValue<BigNumberish>,
+      _endDate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -250,8 +277,20 @@ export interface Crowdfunding extends BaseContract {
     "Claim()"(): ClaimEventFilter;
     Claim(): ClaimEventFilter;
 
-    "Launch()"(): LaunchEventFilter;
-    Launch(): LaunchEventFilter;
+    "Launch(uint256,uint256,address,uint64,uint64)"(
+      id?: null,
+      goal?: null,
+      creator?: PromiseOrValue<string> | null,
+      startDate?: null,
+      endDate?: null
+    ): LaunchEventFilter;
+    Launch(
+      id?: null,
+      goal?: null,
+      creator?: PromiseOrValue<string> | null,
+      startDate?: null,
+      endDate?: null
+    ): LaunchEventFilter;
 
     "Pledge()"(): PledgeEventFilter;
     Pledge(): PledgeEventFilter;
@@ -269,12 +308,15 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    idsToCampaign(
+    idsToCampaigns(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     launch(
+      _goalAmount: PromiseOrValue<BigNumberish>,
+      _startDate: PromiseOrValue<BigNumberish>,
+      _endDate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -296,12 +338,15 @@ export interface Crowdfunding extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    idsToCampaign(
+    idsToCampaigns(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     launch(
+      _goalAmount: PromiseOrValue<BigNumberish>,
+      _startDate: PromiseOrValue<BigNumberish>,
+      _endDate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
