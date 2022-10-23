@@ -3,8 +3,7 @@ import { ethers, deployments, network } from "hardhat";
 import { networkConfig } from "../../helper-hardhat-config";
 
 import { Greeter } from "../../typechain-types/contracts/Greeter";
-
-const HARDHAT_NETWORK_ID = 31337;
+import { HARDHAT_NETWORK_ID } from "../../utils/constants";
 
 describe("Greeter", function () {
   let greeter: Greeter;

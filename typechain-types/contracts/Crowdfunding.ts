@@ -261,7 +261,7 @@ export interface Crowdfunding extends BaseContract {
       _startDate: PromiseOrValue<BigNumberish>,
       _endDate: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 

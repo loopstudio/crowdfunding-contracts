@@ -3,8 +3,6 @@ import { networkConfig } from "../../helper-hardhat-config";
 
 import { Crowdfunding } from "../../typechain-types/Crowdfunding";
 
-const HARDHAT_NETWORK_ID = 31337;
-
 describe("Crowdfunding", function () {
   let crowdfunding: Crowdfunding;
 

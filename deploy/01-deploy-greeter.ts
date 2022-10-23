@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { network } from "hardhat";
+import { HARDHAT_NETWORK_ID } from "../utils/constants";
 
 import { developmentChains, networkConfig } from "../helper-hardhat-config";
 import { verify } from "../utils/verify";
@@ -9,7 +10,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  const HARDHAT_NETWORK_ID = 31337;
   const chainId = network.config.chainId || HARDHAT_NETWORK_ID;
   const currentNetworkConfig = networkConfig[chainId];
 

@@ -1,9 +1,14 @@
-import { ethers, deployments } from "hardhat";
+import { ethers, deployments, getNamedAccounts, network } from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 import { Crowdfunding } from "../../typechain-types/contracts/Crowdfunding";
 import { expect } from "chai";
 import moment from "moment";
+import {
+  CAMPAIGN_MAX_DURATION,
+  ERC20_ADDRESS,
+  HARDHAT_NETWORK_ID,
+} from "../../utils/constants";
 
 describe("Crowdfunding", function () {
   let crowdfunding: Crowdfunding;
@@ -19,6 +24,18 @@ describe("Crowdfunding", function () {
   }
 
   describe("constructor", async function () {
+    it("Should revert if max duration is not greater than zero", async () => {
+      const Crowdfunding = await ethers.getContractFactory("Crowdfunding");
+      await expect(Crowdfunding.deploy(ERC20_ADDRESS, 0)).rejected;
+    });
+
+    it("Should revert if ERC20 address is zero", async () => {
+      const Crowdfunding = await ethers.getContractFactory("Crowdfunding");
+      await expect(
+        Crowdfunding.deploy(ethers.constants.AddressZero, CAMPAIGN_MAX_DURATION)
+      ).rejected;
+    });
+
     it("Should set max campaign period and token address", async () => {
       expect(await crowdfunding.maxCampaignDurationInDays()).to.be.greaterThan(
         ethers.constants.Zero
@@ -54,7 +71,7 @@ describe("Crowdfunding", function () {
       ).to.be.revertedWith("End date must be gt start date");
     });
 
-    it("Should revert if start is equals than end", async () => {
+    it("Should revert if start is equals to end", async () => {
       const start = moment().add(1, "day");
       await expect(
         crowdfunding.launch(100, start.unix(), start.unix())
@@ -67,9 +84,25 @@ describe("Crowdfunding", function () {
 
       await expect(
         crowdfunding.launch(100, start.unix(), end.unix())
-      ).to.be.revertedWith("End date must be gt start date");
+      ).to.be.revertedWith("Duration exceeds maximum");
     });
 
-    // TODO succesful cases
+    it("Should succed", async () => {
+      const { deployer } = await getNamedAccounts();
+      const amount = 100;
+
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+
+      await expect(crowdfunding.launch(amount, start.unix(), end.unix()))
+        .to.emit(crowdfunding, "Launch")
+        .withArgs(
+          ethers.constants.One,
+          amount,
+          deployer,
+          start.unix(),
+          end.unix()
+        );
+    });
   });
 });

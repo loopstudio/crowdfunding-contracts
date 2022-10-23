@@ -67,7 +67,7 @@ contract Crowdfunding {
         uint256 _goalAmount,
         uint64 _startDate,
         uint64 _endDate
-    ) external returns (uint256 id) {
+    ) external {
         console.log("Timestamp", block.timestamp);
         require(_goalAmount > 0, "Goal must be gt 0");
         require(_startDate >= block.timestamp, "Start must be gte now");
@@ -90,7 +90,6 @@ contract Crowdfunding {
         });
 
         emit Launch(campaignId, _goalAmount, msg.sender, _startDate, _endDate);
-        return campaignId;
     }
 
     function cancel() external {}
