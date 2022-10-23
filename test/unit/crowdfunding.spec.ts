@@ -37,7 +37,7 @@ describe("Crowdfunding", function () {
       ).rejected;
     });
 
-    it("Should set max campaign period and token address", async () => {
+    it("Should set max campaign duration and token address", async () => {
       expect(await crowdfunding.maxCampaignDurationInDays()).to.be.greaterThan(
         ethers.constants.Zero
       );
@@ -88,7 +88,7 @@ describe("Crowdfunding", function () {
       ).to.be.revertedWith("Duration exceeds maximum");
     });
 
-    it("Should succed if duration equals to max", async () => {
+    it("Should succed if duration equals to max duration", async () => {
       const { deployer } = await getNamedAccounts();
       const amount = 100;
 
