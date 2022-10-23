@@ -87,7 +87,25 @@ describe("Crowdfunding", function () {
       ).to.be.revertedWith("Duration exceeds maximum");
     });
 
-    it("Should succed", async () => {
+    it("Should succed if duration equals to max", async () => {
+      const { deployer } = await getNamedAccounts();
+      const amount = 100;
+
+      const start = moment().add(1, "day");
+      const end = moment().add(21, "day");
+
+      await expect(crowdfunding.launch(amount, start.unix(), end.unix()))
+        .to.emit(crowdfunding, "Launch")
+        .withArgs(
+          ethers.constants.One,
+          amount,
+          deployer,
+          start.unix(),
+          end.unix()
+        );
+    });
+
+    it("Should succed if duration lower to max", async () => {
       const { deployer } = await getNamedAccounts();
       const amount = 100;
 

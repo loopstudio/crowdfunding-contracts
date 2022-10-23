@@ -3,7 +3,6 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "hardhat/console.sol";
 
 /// @title Crowdfunding
 /// @author @loopstudio
@@ -68,7 +67,6 @@ contract Crowdfunding {
         uint64 _startDate,
         uint64 _endDate
     ) external {
-        console.log("Timestamp", block.timestamp);
         require(_goalAmount > 0, "Goal must be gt 0");
         require(_startDate >= block.timestamp, "Start must be gte now");
         require(_endDate > _startDate, "End date must be gt start date");
