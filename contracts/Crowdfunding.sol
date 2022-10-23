@@ -24,6 +24,7 @@ contract Crowdfunding {
         uint64 endDate
     );
 
+    /// @dev Event emited when Campaign cancelation succeeds
     event Cancel(uint256 id);
     event Pledge();
     event Claim();
