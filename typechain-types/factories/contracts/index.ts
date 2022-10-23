@@ -2,5 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Crowdfunding__factory } from "./Crowdfunding__factory";
-export { Greeter__factory } from "./Greeter__factory";
 export { LoopToken__factory } from "./LoopToken__factory";
