@@ -62,6 +62,11 @@ contract Crowdfunding {
         maxCampaignDurationInDays = _maxCampaignDurationInDays;
     }
 
+    /// @notice Launchs a new campaign
+    /// @dev Creates a new campaign into contract storage and emit a Launch event if transaction succeeds.
+    /// @param _goalAmount Goal amount of the campaign expressed into natural units
+    /// @param _startDate Start date of the campaign expressed into unix timestamp
+    /// @param _endDate End date of the campaign expressed into unix timestamp
     function launch(
         uint256 _goalAmount,
         uint64 _startDate,
