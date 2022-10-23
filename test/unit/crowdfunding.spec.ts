@@ -9,6 +9,7 @@ import {
   ERC20_ADDRESS,
   HARDHAT_NETWORK_ID,
 } from "../../utils/constants";
+import { BigNumber } from "ethers";
 
 describe("Crowdfunding", function () {
   let crowdfunding: Crowdfunding;
@@ -103,6 +104,14 @@ describe("Crowdfunding", function () {
           start.unix(),
           end.unix()
         );
+
+      const campaign = await crowdfunding.idsToCampaigns(ethers.constants.One);
+      expect(campaign.creator).to.be.eq(deployer);
+      expect(campaign.goalAmount).to.be.eq(BigNumber.from(amount));
+      expect(campaign.pledgedAmount).to.be.eq(ethers.constants.Zero);
+      expect(campaign.startDate).to.be.eq(start.unix());
+      expect(campaign.endDate).to.be.eq(end.unix());
+      expect(campaign.claimed).to.be.eq(false);
     });
 
     it("Should succed if duration lower to max", async () => {
@@ -121,6 +130,14 @@ describe("Crowdfunding", function () {
           start.unix(),
           end.unix()
         );
+
+      const campaign = await crowdfunding.idsToCampaigns(ethers.constants.One);
+      expect(campaign.creator).to.be.eq(deployer);
+      expect(campaign.goalAmount).to.be.eq(BigNumber.from(amount));
+      expect(campaign.pledgedAmount).to.be.eq(ethers.constants.Zero);
+      expect(campaign.startDate).to.be.eq(start.unix());
+      expect(campaign.endDate).to.be.eq(end.unix());
+      expect(campaign.claimed).to.be.eq(false);
     });
   });
 });

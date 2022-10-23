@@ -56,7 +56,7 @@ contract Crowdfunding {
         require(_token != address(0), "ERC20 address cannot be zero");
         require(
             _maxCampaignDurationInDays > 0,
-            "Duration must be greater than zero"
+            "Duration must be gt than zero"
         );
         token = IERC20(_token);
         maxCampaignDurationInDays = _maxCampaignDurationInDays;
