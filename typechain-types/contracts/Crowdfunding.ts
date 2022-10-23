@@ -29,7 +29,7 @@ import type {
 
 export interface CrowdfundingInterface extends utils.Interface {
   functions: {
-    "cancel()": FunctionFragment;
+    "cancel(uint256)": FunctionFragment;
     "claim()": FunctionFragment;
     "idsToCampaigns(uint256)": FunctionFragment;
     "launch(uint256,uint64,uint64)": FunctionFragment;
@@ -49,7 +49,10 @@ export interface CrowdfundingInterface extends utils.Interface {
       | "token"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "cancel", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "cancel",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "claim", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "idsToCampaigns",
@@ -163,6 +166,7 @@ export interface Crowdfunding extends BaseContract {
 
   functions: {
     cancel(
+      _campaignId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -201,6 +205,7 @@ export interface Crowdfunding extends BaseContract {
   };
 
   cancel(
+    _campaignId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -238,7 +243,10 @@ export interface Crowdfunding extends BaseContract {
   token(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    cancel(overrides?: CallOverrides): Promise<void>;
+    cancel(
+      _campaignId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     claim(overrides?: CallOverrides): Promise<void>;
 
@@ -301,6 +309,7 @@ export interface Crowdfunding extends BaseContract {
 
   estimateGas: {
     cancel(
+      _campaignId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -331,6 +340,7 @@ export interface Crowdfunding extends BaseContract {
 
   populateTransaction: {
     cancel(
+      _campaignId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

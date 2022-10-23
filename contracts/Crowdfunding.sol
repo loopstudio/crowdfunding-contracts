@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "hardhat/console.sol";
 
 /// @title Crowdfunding
 /// @author @loopstudio
@@ -90,7 +91,18 @@ contract Crowdfunding {
         emit Launch(campaignId, _goalAmount, msg.sender, _startDate, _endDate);
     }
 
-    function cancel() external {}
+    /// @notice Cancels a campaign
+    /// @dev Cancels a campaign if doesnt started. Deletes from mapping and emit a Cancel event if succeed.
+    /// @param _campaignId id of the campaign to cancel
+    function cancel(uint256 _campaignId) external {
+        Campaign memory campaign = idsToCampaigns[_campaignId];
+        require(campaign.creator != address(0), "Not exists");
+        require(campaign.startDate > block.timestamp, "Already started");
+        require(campaign.creator == msg.sender, "Not creator");
+
+        delete idsToCampaigns[_campaignId];
+        emit Cancel(_campaignId);
+    }
 
     function claim() external {}
 

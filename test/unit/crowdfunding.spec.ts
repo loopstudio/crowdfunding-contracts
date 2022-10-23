@@ -1,14 +1,16 @@
-import { ethers, deployments, getNamedAccounts, network } from "hardhat";
+import {
+  ethers,
+  deployments,
+  getNamedAccounts,
+  getUnnamedAccounts,
+  network,
+} from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 import { Crowdfunding } from "../../typechain-types/contracts/Crowdfunding";
 import { expect } from "chai";
 import moment from "moment";
-import {
-  CAMPAIGN_MAX_DURATION,
-  ERC20_ADDRESS,
-  HARDHAT_NETWORK_ID,
-} from "../../utils/constants";
+import { CAMPAIGN_MAX_DURATION, ERC20_ADDRESS } from "../../utils/constants";
 import { BigNumber } from "ethers";
 
 describe("Crowdfunding", function () {
@@ -138,6 +140,64 @@ describe("Crowdfunding", function () {
       expect(campaign.startDate).to.be.eq(start.unix());
       expect(campaign.endDate).to.be.eq(end.unix());
       expect(campaign.claimed).to.be.eq(false);
+    });
+  });
+
+  describe("Cancel", async function () {
+    it("Should revert if campaign not exists", async () => {
+      await expect(crowdfunding.cancel(1)).to.be.revertedWith("Not exists");
+    });
+
+    it("Should revert if campaign started", async () => {
+      const amount = 100;
+      const start = moment().add(1, "day");
+      const cancelMoment = moment().add(2, "day");
+      const end = moment().add(11, "day");
+
+      // Launches tomorrow
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      // Cancels two days from now
+      await network.provider.send("evm_setNextBlockTimestamp", [
+        cancelMoment.unix(),
+      ]);
+      await expect(crowdfunding.cancel(1)).to.be.revertedWith(
+        "Already started"
+      );
+    });
+
+    it("Should revert if not creator", async () => {
+      let notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
+      const amount = 100;
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await expect(
+        crowdfunding.connect(notCreator).cancel(1)
+      ).to.be.revertedWith("Not creator");
+    });
+
+    it("Should cancel succesfuly", async () => {
+      const id = 1;
+      const amount = 100;
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await expect(crowdfunding.cancel(id))
+        .to.emit(crowdfunding, "Cancel")
+        .withArgs(id);
+
+      const deletedCampaign = await crowdfunding.idsToCampaigns(id);
+      expect(deletedCampaign.creator).to.be.eq(ethers.constants.AddressZero);
+      expect(deletedCampaign.goalAmount).to.be.eq(ethers.constants.Zero);
+      expect(deletedCampaign.pledgedAmount).to.be.eq(ethers.constants.Zero);
+      expect(deletedCampaign.startDate).to.be.eq(ethers.constants.Zero);
+      expect(deletedCampaign.endDate).to.be.eq(ethers.constants.Zero);
+      expect(deletedCampaign.claimed).to.be.eq(false);
     });
   });
 });
