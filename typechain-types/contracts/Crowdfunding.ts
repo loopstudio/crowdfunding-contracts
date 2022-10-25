@@ -34,8 +34,10 @@ export interface CrowdfundingInterface extends utils.Interface {
     "idsToCampaigns(uint256)": FunctionFragment;
     "launch(uint256,uint64,uint64)": FunctionFragment;
     "maxCampaignDurationInDays()": FunctionFragment;
+    "pledge()": FunctionFragment;
     "refund()": FunctionFragment;
     "token()": FunctionFragment;
+    "unpledge()": FunctionFragment;
   };
 
   getFunction(
@@ -45,8 +47,10 @@ export interface CrowdfundingInterface extends utils.Interface {
       | "idsToCampaigns"
       | "launch"
       | "maxCampaignDurationInDays"
+      | "pledge"
       | "refund"
       | "token"
+      | "unpledge"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -70,8 +74,10 @@ export interface CrowdfundingInterface extends utils.Interface {
     functionFragment: "maxCampaignDurationInDays",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "pledge", values?: undefined): string;
   encodeFunctionData(functionFragment: "refund", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(functionFragment: "unpledge", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
@@ -84,8 +90,10 @@ export interface CrowdfundingInterface extends utils.Interface {
     functionFragment: "maxCampaignDurationInDays",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pledge", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unpledge", data: BytesLike): Result;
 
   events: {
     "Cancel(uint256)": EventFragment;
@@ -178,13 +186,13 @@ export interface Crowdfunding extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
         creator: string;
         goalAmount: BigNumber;
         pledgedAmount: BigNumber;
         startDate: BigNumber;
         endDate: BigNumber;
-        claimed: boolean;
+        status: number;
       }
     >;
 
@@ -197,11 +205,19 @@ export interface Crowdfunding extends BaseContract {
 
     maxCampaignDurationInDays(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    pledge(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     refund(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
+
+    unpledge(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   cancel(
@@ -217,13 +233,13 @@ export interface Crowdfunding extends BaseContract {
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+    [string, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
       creator: string;
       goalAmount: BigNumber;
       pledgedAmount: BigNumber;
       startDate: BigNumber;
       endDate: BigNumber;
-      claimed: boolean;
+      status: number;
     }
   >;
 
@@ -236,11 +252,19 @@ export interface Crowdfunding extends BaseContract {
 
   maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
+  pledge(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   refund(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
+
+  unpledge(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     cancel(
@@ -254,13 +278,13 @@ export interface Crowdfunding extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
         creator: string;
         goalAmount: BigNumber;
         pledgedAmount: BigNumber;
         startDate: BigNumber;
         endDate: BigNumber;
-        claimed: boolean;
+        status: number;
       }
     >;
 
@@ -273,9 +297,13 @@ export interface Crowdfunding extends BaseContract {
 
     maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pledge(overrides?: CallOverrides): Promise<void>;
+
     refund(overrides?: CallOverrides): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
+
+    unpledge(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -331,11 +359,19 @@ export interface Crowdfunding extends BaseContract {
 
     maxCampaignDurationInDays(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pledge(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     refund(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unpledge(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -364,10 +400,18 @@ export interface Crowdfunding extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    pledge(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     refund(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    unpledge(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

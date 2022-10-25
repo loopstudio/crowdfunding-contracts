@@ -30,6 +30,15 @@ contract Crowdfunding {
     event Claim();
     event Refund();
 
+    /// @dev Status of a campaign. Note: Refunded status is not represented since the need of
+    // keeping track of how many bakers are left to refund (gas consuming) and it doesnt bring any
+    // adventage/ussage
+    enum CampaignStatus {
+        Created,
+        Canceled,
+        Claimed
+    }
+
     /// @notice object that reprents a campaign
     struct Campaign {
         address creator;
@@ -37,7 +46,7 @@ contract Crowdfunding {
         uint256 pledgedAmount;
         uint64 startDate;
         uint64 endDate;
-        bool claimed;
+        CampaignStatus status;
     }
 
     /// @notice Token in which funds will be raised for each campaign
@@ -85,7 +94,7 @@ contract Crowdfunding {
             pledgedAmount: 0,
             startDate: _startDate,
             endDate: _endDate,
-            claimed: false
+            status: CampaignStatus.Created
         });
 
         emit Launch(campaignId, _goalAmount, msg.sender, _startDate, _endDate);
@@ -95,14 +104,16 @@ contract Crowdfunding {
     /// @dev Cancels a campaign if doesnt started. Deletes from mapping and emit a Cancel event if succeed.
     /// @param _campaignId id of the campaign to cancel
     function cancel(uint256 _campaignId) external {
-        Campaign memory campaign = idsToCampaigns[_campaignId];
+        Campaign storage campaign = idsToCampaigns[_campaignId];
         require(campaign.creator != address(0), "Not exists");
-        require(campaign.startDate > block.timestamp, "Already started");
         require(campaign.creator == msg.sender, "Not creator");
-
-        delete idsToCampaigns[_campaignId];
+        campaign.status = CampaignStatus.Canceled;
         emit Cancel(_campaignId);
     }
+
+    function pledge() external {}
+
+    function unpledge() external {}
 
     function claim() external {}
 

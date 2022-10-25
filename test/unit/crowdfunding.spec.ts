@@ -113,7 +113,7 @@ describe("Crowdfunding", function () {
       expect(campaign.pledgedAmount).to.be.eq(ethers.constants.Zero);
       expect(campaign.startDate).to.be.eq(start.unix());
       expect(campaign.endDate).to.be.eq(end.unix());
-      expect(campaign.claimed).to.be.eq(false);
+      expect(campaign.status).to.be.eq(0);
     });
 
     it("Should succed if duration lower to max", async () => {
@@ -139,31 +139,13 @@ describe("Crowdfunding", function () {
       expect(campaign.pledgedAmount).to.be.eq(ethers.constants.Zero);
       expect(campaign.startDate).to.be.eq(start.unix());
       expect(campaign.endDate).to.be.eq(end.unix());
-      expect(campaign.claimed).to.be.eq(false);
+      expect(campaign.status).to.be.eq(0);
     });
   });
 
   describe("Cancel", async function () {
     it("Should revert if campaign not exists", async () => {
       await expect(crowdfunding.cancel(1)).to.be.revertedWith("Not exists");
-    });
-
-    it("Should revert if campaign started", async () => {
-      const amount = 100;
-      const start = moment().add(1, "day");
-      const cancelMoment = moment().add(2, "day");
-      const end = moment().add(11, "day");
-
-      // Launches tomorrow
-      await crowdfunding.launch(amount, start.unix(), end.unix());
-
-      // Cancels two days from now
-      await network.provider.send("evm_setNextBlockTimestamp", [
-        cancelMoment.unix(),
-      ]);
-      await expect(crowdfunding.cancel(1)).to.be.revertedWith(
-        "Already started"
-      );
     });
 
     it("Should revert if not creator", async () => {
@@ -191,13 +173,8 @@ describe("Crowdfunding", function () {
         .to.emit(crowdfunding, "Cancel")
         .withArgs(id);
 
-      const deletedCampaign = await crowdfunding.idsToCampaigns(id);
-      expect(deletedCampaign.creator).to.be.eq(ethers.constants.AddressZero);
-      expect(deletedCampaign.goalAmount).to.be.eq(ethers.constants.Zero);
-      expect(deletedCampaign.pledgedAmount).to.be.eq(ethers.constants.Zero);
-      expect(deletedCampaign.startDate).to.be.eq(ethers.constants.Zero);
-      expect(deletedCampaign.endDate).to.be.eq(ethers.constants.Zero);
-      expect(deletedCampaign.claimed).to.be.eq(false);
+      const canceledCampaign = await crowdfunding.idsToCampaigns(id);
+      expect(canceledCampaign.status).to.be.eq(1);
     });
   });
 });
