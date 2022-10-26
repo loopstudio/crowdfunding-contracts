@@ -119,7 +119,8 @@ contract Crowdfunding {
     /// @notice Contribute to campaign
     /// @dev Contribute to a campaign if started and not ended. Perform a SafeER20.transferFrom that
     // requires previous allowance set. Emmit a Pledge event if succeed.
-    /// @param _campaignId id of the campaign to cancel
+    /// @param _campaignId id of the campaign pledge
+    /// @param _amount the amount to pledge
     function pledge(uint256 _campaignId, uint256 _amount) external {
         Campaign storage campaign = idsToCampaigns[_campaignId];
 
