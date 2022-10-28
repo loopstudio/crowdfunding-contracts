@@ -48,7 +48,7 @@ describe("Crowdfunding", function () {
       expect(await crowdfunding.maxCampaignDurationInDays()).to.be.greaterThan(
         ethers.constants.Zero
       );
-      expect(await crowdfunding.token()).to.be.not.null;
+      expect(await crowdfunding.tokenAddress()).to.be.not.null;
     });
   });
 
