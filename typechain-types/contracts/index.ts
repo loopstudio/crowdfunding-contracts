@@ -2,5 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Crowdfunding } from "./Crowdfunding";
-export type { Greeter } from "./Greeter";
 export type { LoopToken } from "./LoopToken";

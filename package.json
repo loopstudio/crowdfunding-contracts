@@ -39,6 +39,7 @@
     "hardhat": "^2.10.1",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-gas-reporter": "^1.0.8",
+    "moment": "^2.29.4",
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-dev.23",
     "solhint": "^3.3.7",
