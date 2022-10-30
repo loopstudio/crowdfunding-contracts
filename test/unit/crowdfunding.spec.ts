@@ -11,19 +11,24 @@ import { Crowdfunding } from "../../typechain-types/contracts/Crowdfunding";
 import { expect } from "chai";
 import moment from "moment";
 import { CAMPAIGN_MAX_DURATION, ERC20_ADDRESS } from "../../utils/constants";
-import { BigNumber } from "ethers";
+import { BigNumber, utils } from "ethers";
+import { LoopToken } from "../../typechain-types";
 
 describe("Crowdfunding", function () {
   let crowdfunding: Crowdfunding;
+  let token: LoopToken;
 
   beforeEach(async function () {
-    crowdfunding = await loadFixture(deployCrowdfundingFixture);
+    ({ crowdfunding, token } = await loadFixture(deployCrowdfundingFixture));
   });
 
   async function deployCrowdfundingFixture() {
-    await deployments.fixture(["crowdfunding"]);
+    await deployments.fixture(["crowdfunding", "erc20"]);
+
     const crowdfunding = await ethers.getContract("Crowdfunding");
-    return crowdfunding;
+    const token = await ethers.getContract("LoopToken");
+
+    return { crowdfunding, token };
   }
 
   describe("constructor", async function () {
@@ -43,7 +48,7 @@ describe("Crowdfunding", function () {
       expect(await crowdfunding.maxCampaignDurationInDays()).to.be.greaterThan(
         ethers.constants.Zero
       );
-      expect(await crowdfunding.token()).to.be.not.null;
+      expect(await crowdfunding.tokenAddress()).to.be.not.null;
     });
   });
 
@@ -143,7 +148,7 @@ describe("Crowdfunding", function () {
     });
   });
 
-  describe("Cancel", async function () {
+  describe("cancel", async function () {
     it("Should revert if campaign not exists", async () => {
       await expect(crowdfunding.cancel(1)).to.be.revertedWith("Not exists");
     });
@@ -175,6 +180,113 @@ describe("Crowdfunding", function () {
 
       const canceledCampaign = await crowdfunding.idsToCampaigns(id);
       expect(canceledCampaign.status).to.be.eq(1);
+    });
+  });
+
+  describe("pledge", async function () {
+    it("Should revert if campaign not exists", async () => {
+      await expect(
+        crowdfunding.pledge(1, utils.parseEther("1"))
+      ).to.be.revertedWith("Not exists");
+    });
+
+    it("Should revert if amount is zero", async () => {
+      const id = 1;
+      const amount = 100;
+      const pledge = 0;
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await expect(crowdfunding.pledge(id, 0)).to.be.revertedWith(
+        "Pledge amount must be gt 0"
+      );
+    });
+
+    it("Should revert if canceled", async () => {
+      const id = 1;
+      const amount = 100;
+      const pledge = 20;
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+      await crowdfunding.cancel(id);
+
+      await expect(crowdfunding.pledge(id, pledge)).to.be.revertedWith(
+        "Invalid status"
+      );
+    });
+
+    it("Should revert if not started", async () => {
+      const id = 1;
+      const amount = 100;
+      const pledge = 20;
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await expect(crowdfunding.pledge(id, pledge)).to.be.revertedWith(
+        "Not started"
+      );
+    });
+
+    it("Should revert if ended", async () => {
+      const id = 1;
+      const amount = 100;
+      const pledge = 20;
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+      const currentTime = moment().add(15, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await network.provider.send("evm_setNextBlockTimestamp", [
+        currentTime.unix(),
+      ]);
+
+      await expect(crowdfunding.pledge(id, pledge)).to.be.revertedWith("Ended");
+    });
+
+    it("Should succed if enough allowance", async () => {
+      const id = 1;
+      const amount = 100;
+      const pledge = utils.parseEther("10");
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+      const currentTime = moment().add(5, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await network.provider.send("evm_setNextBlockTimestamp", [
+        currentTime.unix(),
+      ]);
+
+      await token.approve(crowdfunding.address, pledge);
+      await crowdfunding.pledge(id, pledge);
+    });
+
+    it("Should revert if not enough allowance", async () => {
+      const id = 1;
+      const amount = 100;
+      const allowance = utils.parseEther("9");
+      const pledge = utils.parseEther("10");
+      const start = moment().add(1, "day");
+      const end = moment().add(11, "day");
+      const currentTime = moment().add(5, "day");
+
+      await crowdfunding.launch(amount, start.unix(), end.unix());
+
+      await network.provider.send("evm_setNextBlockTimestamp", [
+        currentTime.unix(),
+      ]);
+
+      await token.approve(crowdfunding.address, allowance);
+      await expect(crowdfunding.pledge(id, pledge)).to.be.revertedWith(
+        "ERC20: insufficient allowance"
+      );
     });
   });
 });

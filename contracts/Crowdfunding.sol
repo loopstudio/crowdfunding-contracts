@@ -26,7 +26,8 @@ contract Crowdfunding {
 
     /// @dev Event emited when Campaign cancelation succeeds
     event Cancel(uint256 id);
-    event Pledge();
+    // @dev Event emited when Campaign receives a contribution
+    event Pledge(uint256 id, address indexed pledger, uint256 amount);
     event Claim();
     event Refund();
 
@@ -49,13 +50,16 @@ contract Crowdfunding {
         CampaignStatus status;
     }
 
-    /// @notice Token in which funds will be raised for each campaign
-    /// @dev Tokens must be ERC20 compliant
-    IERC20 public immutable token;
+    /// @notice Token address in which funds will be raised for each campaign
+    /// @dev Token must be ERC20 compliant
+    address public immutable tokenAddress;
     /// @dev Counter for storage of campaign ids
     Counters.Counter private idCounter;
     /// @dev Mapping that stores the campaigns by their id
     mapping(uint256 => Campaign) public idsToCampaigns;
+    /// @dev Mapping that stores by campaingId, the amount pledged by address. Id -> pledger -> amount
+    mapping(uint256 => mapping(address => uint256))
+        public idsToPledgedAmountByAddress;
     /// @dev timestamp = that represents the max duration for a campaign. I.e 60 days
     uint64 public immutable maxCampaignDurationInDays;
 
@@ -68,7 +72,8 @@ contract Crowdfunding {
             _maxCampaignDurationInDays > 0,
             "Duration must be gt than zero"
         );
-        token = IERC20(_token);
+
+        tokenAddress = _token;
         maxCampaignDurationInDays = _maxCampaignDurationInDays;
     }
 
@@ -101,7 +106,7 @@ contract Crowdfunding {
     }
 
     /// @notice Cancels a campaign
-    /// @dev Cancels a campaign if doesnt started. Deletes from mapping and emit a Cancel event if succeed.
+    /// @dev Cancels a campaign, changing the status to Canceled and emits a Cancel event.
     /// @param _campaignId id of the campaign to cancel
     function cancel(uint256 _campaignId) external {
         Campaign storage campaign = idsToCampaigns[_campaignId];
@@ -111,9 +116,38 @@ contract Crowdfunding {
         emit Cancel(_campaignId);
     }
 
-    function pledge() external {}
+    /// @notice Contribute to campaign
+    /// @dev Contribute to a campaign if started and not ended. Perform a SafeER20.transferFrom that
+    // requires previous allowance set. Emmit a Pledge event if succeed.
+    /// @param _campaignId id of the campaign pledge
+    /// @param _amount the amount to pledge
+    function pledge(uint256 _campaignId, uint256 _amount) external {
+        require(_amount > 0, "Pledge amount must be gt 0");
+        Campaign storage campaign = idsToCampaigns[_campaignId];
 
-    function unpledge() external {}
+        require(campaign.creator != address(0), "Not exists");
+        require(campaign.status == CampaignStatus.Created, "Invalid status");
+        require(campaign.startDate <= block.timestamp, "Not started");
+        require(campaign.endDate > block.timestamp, "Ended");
+
+        campaign.pledgedAmount += _amount;
+        idsToPledgedAmountByAddress[_campaignId][msg.sender] += _amount;
+
+        IERC20(tokenAddress).safeTransferFrom(
+            msg.sender,
+            address(this),
+            _amount
+        );
+
+        emit Pledge(_campaignId, msg.sender, _amount);
+    }
+
+    /// @notice Refund contribution to campaign
+    /// @dev Refund contribution made to a campaign if started and not ended. Perform a SafeER20.transferFrom.
+    /// Emit a Unpledge event if succeed.
+    /// @param _campaignId id of the campaign to unpledge
+    /// @param _amount the amount to unpledge
+    function unpledge(uint256 _campaignId, uint256 _amount) external {}
 
     function claim() external {}
 
