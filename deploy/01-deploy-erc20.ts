@@ -39,5 +39,5 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   log(`${contractToDeploy} deployed successfully`);
 };
 
-func.tags = ["all", "erc20"];
+func.tags = ["all", "looptoken"];
 export default func;
