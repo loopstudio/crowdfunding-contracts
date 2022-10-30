@@ -97,7 +97,7 @@ describe("Crowdfunding", function () {
 
     it("Should succed if duration equals to max duration", async () => {
       const { deployer } = await getNamedAccounts();
-      const amount = 100;
+      const amount = utils.parseEther("100");
 
       const start = moment().add(1, "day");
       const end = moment().add(21, "day");
@@ -123,7 +123,7 @@ describe("Crowdfunding", function () {
 
     it("Should succed if duration lower to max", async () => {
       const { deployer } = await getNamedAccounts();
-      const amount = 100;
+      const amount = utils.parseEther("100");
 
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
@@ -155,7 +155,7 @@ describe("Crowdfunding", function () {
 
     it("Should revert if not creator", async () => {
       let notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
-      const amount = 100;
+      const amount = utils.parseEther("100");
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
 
@@ -168,7 +168,7 @@ describe("Crowdfunding", function () {
 
     it("Should cancel succesfuly", async () => {
       const id = 1;
-      const amount = 100;
+      const amount = utils.parseEther("100");
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
 
@@ -192,7 +192,7 @@ describe("Crowdfunding", function () {
 
     it("Should revert if amount is zero", async () => {
       const id = 1;
-      const amount = 100;
+      const amount = utils.parseEther("100");
       const pledge = 0;
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
@@ -206,8 +206,8 @@ describe("Crowdfunding", function () {
 
     it("Should revert if canceled", async () => {
       const id = 1;
-      const amount = 100;
-      const pledge = 20;
+      const amount = utils.parseEther("100");
+      const pledge = utils.parseEther("20");
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
 
@@ -221,8 +221,8 @@ describe("Crowdfunding", function () {
 
     it("Should revert if not started", async () => {
       const id = 1;
-      const amount = 100;
-      const pledge = 20;
+      const amount = utils.parseEther("100");
+      const pledge = utils.parseEther("20");
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
 
@@ -235,8 +235,8 @@ describe("Crowdfunding", function () {
 
     it("Should revert if ended", async () => {
       const id = 1;
-      const amount = 100;
-      const pledge = 20;
+      const amount = utils.parseEther("100");
+      const pledge = utils.parseEther("20");
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
       const currentTime = moment().add(15, "day");
@@ -251,8 +251,9 @@ describe("Crowdfunding", function () {
     });
 
     it("Should succed if enough allowance", async () => {
+      const { deployer } = await getNamedAccounts();
       const id = 1;
-      const amount = 100;
+      const amount = utils.parseEther("100");
       const pledge = utils.parseEther("10");
       const start = moment().add(1, "day");
       const end = moment().add(11, "day");
@@ -266,11 +267,21 @@ describe("Crowdfunding", function () {
 
       await token.approve(crowdfunding.address, pledge);
       await crowdfunding.pledge(id, pledge);
+
+      const campaign = await crowdfunding.idsToCampaigns(id);
+      expect(campaign.pledgedAmount).to.be.eq(pledge);
+
+      const pledgerAmount = await crowdfunding.idsToPledgedAmountByAddress(
+        id,
+        deployer
+      );
+
+      expect(pledgerAmount).to.be.eq(pledge);
     });
 
     it("Should revert if not enough allowance", async () => {
       const id = 1;
-      const amount = 100;
+      const amount = utils.parseEther("100");
       const allowance = utils.parseEther("9");
       const pledge = utils.parseEther("10");
       const start = moment().add(1, "day");
