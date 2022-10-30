@@ -128,16 +128,31 @@ describe("Crowdfunding: unpledge", function () {
       .to.emit(crowdfunding, "Unpledge")
       .withArgs(ethers.constants.One, deployer, unpledge);
 
-    // Expect remining amount to be 15 tokens
-    const campaign = await crowdfunding.idsToCampaigns(id);
+    // Expect campaing remining amount to be 15 tokens
+    let campaign = await crowdfunding.idsToCampaigns(id);
     expect(campaign.pledgedAmount).to.be.eq(utils.parseEther("15"));
 
     // Expect user 1 pledged amount to be 5 tokens
-    const pledgerAmount = await crowdfunding.idsToPledgedAmountByAddress(
+    const userOnePledgeAmount = await crowdfunding.idsToPledgedAmountByAddress(
       id,
       deployer
     );
+    expect(userOnePledgeAmount).to.be.eq(utils.parseEther("5"));
 
-    expect(pledgerAmount).to.be.eq(utils.parseEther("5"));
+    // User 2 unpledge full balance: 10 tokens
+    await expect(crowdfunding.connect(user).unpledge(id, pledge))
+      .to.emit(crowdfunding, "Unpledge")
+      .withArgs(ethers.constants.One, user.address, pledge);
+
+    // Expect campaign remining amount to be 5 tokens
+    campaign = await crowdfunding.idsToCampaigns(id);
+    expect(campaign.pledgedAmount).to.be.eq(utils.parseEther("5"));
+
+    // Expect user 2 pledged amount to be 0 tokens
+    const userTwoPledgeAmount = await crowdfunding.idsToPledgedAmountByAddress(
+      id,
+      user.address
+    );
+    expect(userTwoPledgeAmount).to.be.eq(utils.parseEther("0"));
   });
 });
