@@ -28,6 +28,8 @@ contract Crowdfunding {
     event Cancel(uint256 id);
     // @dev Event emited when Campaign receives a contribution
     event Pledge(uint256 id, address indexed pledger, uint256 amount);
+    // @dev Event emited when pledger withdraw a contribution
+    event Unpledge(uint256 id, address indexed pledger, uint256 amount);
     event Claim();
     event Refund();
 
@@ -124,7 +126,6 @@ contract Crowdfunding {
     function pledge(uint256 _campaignId, uint256 _amount) external {
         require(_amount > 0, "Pledge amount must be gt 0");
         Campaign storage campaign = idsToCampaigns[_campaignId];
-
         require(campaign.creator != address(0), "Not exists");
         require(campaign.status == CampaignStatus.Created, "Invalid status");
         require(campaign.startDate <= block.timestamp, "Not started");
@@ -142,12 +143,28 @@ contract Crowdfunding {
         emit Pledge(_campaignId, msg.sender, _amount);
     }
 
-    /// @notice Refund contribution to campaign
-    /// @dev Refund contribution made to a campaign if started and not ended. Perform a SafeER20.transferFrom.
+    /// @notice Unpledge contribution to campaign
+    /// @dev Unpledge contribution made to a campaign if not ended. Perform a SafeER20.transferFrom.
     /// Emit a Unpledge event if succeed.
     /// @param _campaignId id of the campaign to unpledge
     /// @param _amount the amount to unpledge
-    function unpledge(uint256 _campaignId, uint256 _amount) external {}
+    function unpledge(uint256 _campaignId, uint256 _amount) external {
+        require(_amount > 0, "Unpledge amount must be gt 0");
+        Campaign storage campaign = idsToCampaigns[_campaignId];
+        require(campaign.creator != address(0), "Not exists");
+        require(campaign.endDate > block.timestamp, "Ended");
+        uint256 pledgerAmount = idsToPledgedAmountByAddress[_campaignId][
+            msg.sender
+        ];
+        require(pledgerAmount >= _amount, "Insufficient balance to unpledge");
+
+        campaign.pledgedAmount -= _amount;
+        idsToPledgedAmountByAddress[_campaignId][msg.sender] -= _amount;
+
+        IERC20(tokenAddress).safeTransfer(msg.sender, _amount);
+
+        emit Unpledge(_campaignId, msg.sender, _amount);
+    }
 
     function claim() external {}
 

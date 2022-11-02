@@ -123,6 +123,7 @@ export interface CrowdfundingInterface extends utils.Interface {
     "Launch(uint256,uint256,address,uint64,uint64)": EventFragment;
     "Pledge(uint256,address,uint256)": EventFragment;
     "Refund()": EventFragment;
+    "Unpledge(uint256,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Cancel"): EventFragment;
@@ -130,6 +131,7 @@ export interface CrowdfundingInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Launch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Pledge"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Refund"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpledge"): EventFragment;
 }
 
 export interface CancelEventObject {
@@ -174,6 +176,18 @@ export interface RefundEventObject {}
 export type RefundEvent = TypedEvent<[], RefundEventObject>;
 
 export type RefundEventFilter = TypedEventFilter<RefundEvent>;
+
+export interface UnpledgeEventObject {
+  id: BigNumber;
+  pledger: string;
+  amount: BigNumber;
+}
+export type UnpledgeEvent = TypedEvent<
+  [BigNumber, string, BigNumber],
+  UnpledgeEventObject
+>;
+
+export type UnpledgeEventFilter = TypedEventFilter<UnpledgeEvent>;
 
 export interface Crowdfunding extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -404,6 +418,17 @@ export interface Crowdfunding extends BaseContract {
 
     "Refund()"(): RefundEventFilter;
     Refund(): RefundEventFilter;
+
+    "Unpledge(uint256,address,uint256)"(
+      id?: null,
+      pledger?: PromiseOrValue<string> | null,
+      amount?: null
+    ): UnpledgeEventFilter;
+    Unpledge(
+      id?: null,
+      pledger?: PromiseOrValue<string> | null,
+      amount?: null
+    ): UnpledgeEventFilter;
   };
 
   estimateGas: {
