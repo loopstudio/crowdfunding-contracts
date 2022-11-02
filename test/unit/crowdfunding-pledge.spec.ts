@@ -12,6 +12,12 @@ describe("Crowdfunding: pledge", function () {
   let crowdfunding: Crowdfunding;
   let token: LoopToken;
 
+  const id = 1;
+  const amount = utils.parseEther("100");
+  const start = moment().add(1, "day");
+  const end = moment().add(11, "day");
+  const pledge = utils.parseEther("20");
+
   beforeEach(async function () {
     ({ crowdfunding, token } = await loadFixture(deployCrowdfundingFixture));
   });
@@ -23,11 +29,6 @@ describe("Crowdfunding: pledge", function () {
   });
 
   it("Should revert if amount is zero", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
     await expect(crowdfunding.pledge(id, 0)).to.be.revertedWith(
@@ -36,13 +37,6 @@ describe("Crowdfunding: pledge", function () {
   });
 
   it("Should revert if canceled", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
-    const pledge = utils.parseEther("20");
-
     await crowdfunding.launch(amount, start.unix(), end.unix());
     await crowdfunding.cancel(id);
 
@@ -52,13 +46,6 @@ describe("Crowdfunding: pledge", function () {
   });
 
   it("Should revert if not started", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
-    const pledge = utils.parseEther("20");
-
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
     await expect(crowdfunding.pledge(id, pledge)).to.be.revertedWith(
@@ -67,13 +54,7 @@ describe("Crowdfunding: pledge", function () {
   });
 
   it("Should revert if ended", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
     const pledgeTime = moment().add(15, "day");
-
-    const pledge = utils.parseEther("20");
 
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
@@ -87,18 +68,13 @@ describe("Crowdfunding: pledge", function () {
   it("Should succeed", async () => {
     const { deployer } = await getNamedAccounts();
     let user = await ethers.getSigner((await getUnnamedAccounts())[0]);
-    token.transfer(user.address, utils.parseEther("10"));
+    token.transfer(user.address, utils.parseEther("20"));
 
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
     const pledgeTime = moment().add(5, "day");
-    const pledge = utils.parseEther("10");
 
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
-    //5 days later: 2 users pledge 10 tokens 5
+    //5 days later: 2 users pledge 20 tokens
     await network.provider.send("evm_setNextBlockTimestamp", [
       pledgeTime.unix(),
     ]);
@@ -114,11 +90,11 @@ describe("Crowdfunding: pledge", function () {
       .to.emit(crowdfunding, "Pledge")
       .withArgs(ethers.constants.One, user.address, pledge);
 
-    // Campaign pledged should be 20
+    // Campaign pledged should be 40
     const campaign = await crowdfunding.idsToCampaigns(id);
-    expect(campaign.pledgedAmount).to.be.eq(utils.parseEther("20"));
+    expect(campaign.pledgedAmount).to.be.eq(utils.parseEther("40"));
 
-    // User 1 pledged amount should be 10
+    // User 1 pledged amount should be 20
     const userOnePledgedAmount = await crowdfunding.idsToPledgedAmountByAddress(
       id,
       deployer
@@ -126,7 +102,7 @@ describe("Crowdfunding: pledge", function () {
 
     expect(userOnePledgedAmount).to.be.eq(pledge);
 
-    // User 1 pledged amount should be 10
+    // User 1 pledged amount should be 20
     const userTwoPledgedAmount = await crowdfunding.idsToPledgedAmountByAddress(
       id,
       user.address
@@ -136,13 +112,7 @@ describe("Crowdfunding: pledge", function () {
   });
 
   it("Should revert if not enough allowance", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
     const allowance = utils.parseEther("9");
-    const pledge = utils.parseEther("10");
     const pledgeTime = moment().add(5, "day");
 
     await crowdfunding.launch(amount, start.unix(), end.unix());

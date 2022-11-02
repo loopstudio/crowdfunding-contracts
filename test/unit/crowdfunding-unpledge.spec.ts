@@ -12,6 +12,11 @@ describe("Crowdfunding: unpledge", function () {
   let crowdfunding: Crowdfunding;
   let token: LoopToken;
 
+  const id = 1;
+  const amount = utils.parseEther("100");
+  const start = moment().add(1, "day");
+  const end = moment().add(11, "day");
+
   beforeEach(async function () {
     ({ crowdfunding, token } = await loadFixture(deployCrowdfundingFixture));
   });
@@ -23,11 +28,6 @@ describe("Crowdfunding: unpledge", function () {
   });
 
   it("Should revert if amount is zero", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
     await expect(crowdfunding.unpledge(id, 0)).to.be.revertedWith(
@@ -37,9 +37,6 @@ describe("Crowdfunding: unpledge", function () {
 
   it("Should revert if ended", async () => {
     const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
 
     const pledge = utils.parseEther("10");
     const pledgeTime = moment().add(5, "day");
@@ -62,11 +59,6 @@ describe("Crowdfunding: unpledge", function () {
   });
 
   it("Should revert if insufficient balance to unpledge", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
     const pledge = utils.parseEther("10");
     const unpledge = utils.parseEther("11");
     const pledgeTime = moment().add(5, "day");
@@ -94,11 +86,6 @@ describe("Crowdfunding: unpledge", function () {
     const { deployer } = await getNamedAccounts();
     let user = await ethers.getSigner((await getUnnamedAccounts())[0]);
     token.transfer(user.address, utils.parseEther("10"));
-
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
 
     const pledge = utils.parseEther("10");
     const unpledge = utils.parseEther("5");

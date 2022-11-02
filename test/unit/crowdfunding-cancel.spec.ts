@@ -11,6 +11,10 @@ import { deployCrowdfundingFixture } from "./fixtures/deploy-crowfunding";
 describe("Crowdfunding: cancel", function () {
   let crowdfunding: Crowdfunding;
   let token: LoopToken;
+  const id = 1;
+  const amount = utils.parseEther("100");
+  const start = moment().add(1, "day");
+  const end = moment().add(11, "day");
 
   beforeEach(async function () {
     ({ crowdfunding, token } = await loadFixture(deployCrowdfundingFixture));
@@ -22,9 +26,6 @@ describe("Crowdfunding: cancel", function () {
 
   it("Should revert if not creator", async () => {
     let notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
 
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
@@ -34,11 +35,6 @@ describe("Crowdfunding: cancel", function () {
   });
 
   it("Should cancel succesfuly", async () => {
-    const id = 1;
-    const amount = utils.parseEther("100");
-    const start = moment().add(1, "day");
-    const end = moment().add(11, "day");
-
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
     await expect(crowdfunding.cancel(id))
