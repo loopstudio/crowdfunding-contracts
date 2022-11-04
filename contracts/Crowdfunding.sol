@@ -30,7 +30,8 @@ contract Crowdfunding {
     event Pledge(uint256 id, address indexed pledger, uint256 amount);
     // @dev Event emited when pledger withdraw a contribution
     event Unpledge(uint256 id, address indexed pledger, uint256 amount);
-    event Claim();
+    // @dev Event emited when creator executes the claim
+    event Claim(uint256 id, address indexed creator, uint256 amount);
     event Refund();
 
     /// @dev Status of a campaign. Note: Refunded status is not represented since the need of
@@ -166,7 +167,23 @@ contract Crowdfunding {
         emit Unpledge(_campaignId, msg.sender, _amount);
     }
 
-    function claim() external {}
+    /// @notice Claims the campaign's pledged amount.
+    /// @dev Claims a campaign, changing the status to Claimed and emits a Claim event.
+    /// Perform a safeTransfer to the campaing's creator.
+    /// @param _campaignId id of the campaign to claim.
+    function claim(uint256 _campaignId) external {
+        Campaign storage campaign = idsToCampaigns[_campaignId];
+        require(campaign.creator != address(0), "Not exists");
+        require(campaign.creator == msg.sender, "Not creator");
+        require(campaign.pledgedAmount >= campaign.goalAmount, "Goal not reached");
+        require(campaign.endDate < block.timestamp, "Still active");
 
-    function refund() external {}
+        campaign.status = CampaignStatus.Claimed;
+
+        emit Claim(_campaignId, msg.sender, campaign.pledgedAmount);
+
+        IERC20(tokenAddress).safeTransfer(msg.sender, campaign.pledgedAmount);
+    }
+
+    // function refund() external {}
 }
