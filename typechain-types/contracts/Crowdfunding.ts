@@ -36,7 +36,7 @@ export interface CrowdfundingInterface extends utils.Interface {
     "launch(uint256,uint64,uint64)": FunctionFragment;
     "maxCampaignDurationInDays()": FunctionFragment;
     "pledge(uint256,uint256)": FunctionFragment;
-    "refund()": FunctionFragment;
+    "refund(uint256)": FunctionFragment;
     "tokenAddress()": FunctionFragment;
     "unpledge(uint256,uint256)": FunctionFragment;
   };
@@ -84,7 +84,10 @@ export interface CrowdfundingInterface extends utils.Interface {
     functionFragment: "pledge",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "refund", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "refund",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "tokenAddress",
     values?: undefined
@@ -122,7 +125,7 @@ export interface CrowdfundingInterface extends utils.Interface {
     "Claim()": EventFragment;
     "Launch(uint256,uint256,address,uint64,uint64)": EventFragment;
     "Pledge(uint256,address,uint256)": EventFragment;
-    "Refund()": EventFragment;
+    "Refund(uint256,address,uint256)": EventFragment;
     "Unpledge(uint256,address,uint256)": EventFragment;
   };
 
@@ -172,8 +175,15 @@ export type PledgeEvent = TypedEvent<
 
 export type PledgeEventFilter = TypedEventFilter<PledgeEvent>;
 
-export interface RefundEventObject {}
-export type RefundEvent = TypedEvent<[], RefundEventObject>;
+export interface RefundEventObject {
+  id: BigNumber;
+  pledger: string;
+  amount: BigNumber;
+}
+export type RefundEvent = TypedEvent<
+  [BigNumber, string, BigNumber],
+  RefundEventObject
+>;
 
 export type RefundEventFilter = TypedEventFilter<RefundEvent>;
 
@@ -261,6 +271,7 @@ export interface Crowdfunding extends BaseContract {
     ): Promise<ContractTransaction>;
 
     refund(
+      _campaignId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -318,6 +329,7 @@ export interface Crowdfunding extends BaseContract {
   ): Promise<ContractTransaction>;
 
   refund(
+    _campaignId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -372,7 +384,10 @@ export interface Crowdfunding extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    refund(overrides?: CallOverrides): Promise<void>;
+    refund(
+      _campaignId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     tokenAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -416,8 +431,16 @@ export interface Crowdfunding extends BaseContract {
       amount?: null
     ): PledgeEventFilter;
 
-    "Refund()"(): RefundEventFilter;
-    Refund(): RefundEventFilter;
+    "Refund(uint256,address,uint256)"(
+      id?: null,
+      pledger?: PromiseOrValue<string> | null,
+      amount?: null
+    ): RefundEventFilter;
+    Refund(
+      id?: null,
+      pledger?: PromiseOrValue<string> | null,
+      amount?: null
+    ): RefundEventFilter;
 
     "Unpledge(uint256,address,uint256)"(
       id?: null,
@@ -468,6 +491,7 @@ export interface Crowdfunding extends BaseContract {
     ): Promise<BigNumber>;
 
     refund(
+      _campaignId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -519,6 +543,7 @@ export interface Crowdfunding extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     refund(
+      _campaignId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -31,7 +31,8 @@ contract Crowdfunding {
     // @dev Event emited when pledger withdraw a contribution
     event Unpledge(uint256 id, address indexed pledger, uint256 amount);
     event Claim();
-    event Refund();
+    // @dev Event emited when pledger performs a refund
+    event Refund(uint256 id, address indexed pledger, uint256 amount);
 
     /// @dev Status of a campaign. Note: Refunded status is not represented since the need of
     // keeping track of how many bakers are left to refund (gas consuming) and it doesnt bring any
@@ -168,5 +169,28 @@ contract Crowdfunding {
 
     function claim() external {}
 
-    function refund() external {}
+    /// @notice Refund the pledged amount if ended and goal was not reached.
+    /// @dev Performs a refund operation of the pledger amount if campaing does not reached the goal.
+    /// Performs a safeTransfer to the msg.sender and emits a Refund event.
+    /// @param _campaignId id of the campaign to refund .
+    function refund(uint256 _campaignId) external {
+        Campaign storage campaign = idsToCampaigns[_campaignId];
+        require(campaign.creator != address(0), "Not exists");
+        require(campaign.endDate < block.timestamp, "Still active");
+        require(
+            campaign.pledgedAmount < campaign.goalAmount,
+            "Campaign reached its goal"
+        );
+        uint256 pledgerAmount = idsToPledgedAmountByAddress[_campaignId][
+            msg.sender
+        ];
+        require(pledgerAmount > 0, "No funds to refund");
+
+        idsToPledgedAmountByAddress[_campaignId][msg.sender] -= pledgerAmount;
+        campaign.pledgedAmount -= pledgerAmount;
+
+        IERC20(tokenAddress).safeTransfer(msg.sender, pledgerAmount);
+
+        emit Refund(_campaignId, msg.sender, pledgerAmount);
+    }
 }
