@@ -10,10 +10,9 @@ import { deployCrowdfundingFixture } from "./fixtures/deploy-crowfunding";
 
 describe("Crowdfunding: launch", function () {
   let crowdfunding: Crowdfunding;
-  let token: LoopToken;
 
   beforeEach(async function () {
-    ({ crowdfunding, token } = await loadFixture(deployCrowdfundingFixture));
+    ({ crowdfunding } = await loadFixture(deployCrowdfundingFixture));
   });
 
   it("Should revert if goal is not greater than zero", async () => {
