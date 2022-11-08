@@ -167,7 +167,7 @@ contract Crowdfunding {
         emit Unpledge(_campaignId, msg.sender, _amount);
     }
 
-    function claim() external {}
+    //function claim() external {}
 
     /// @notice Refund the pledged amount if ended and goal was not reached.
     /// @dev Performs a refund operation of the pledger amount if campaing does not reached the goal.
