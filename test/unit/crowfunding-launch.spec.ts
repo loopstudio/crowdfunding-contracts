@@ -5,7 +5,6 @@ import { Crowdfunding } from "../../typechain-types/contracts/Crowdfunding";
 import { expect } from "chai";
 import moment from "moment";
 import { BigNumber, utils } from "ethers";
-import { LoopToken } from "../../typechain-types";
 import { deployCrowdfundingFixture } from "./fixtures/deploy-crowfunding";
 
 describe("Crowdfunding: launch", function () {
