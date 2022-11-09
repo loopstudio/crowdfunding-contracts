@@ -135,13 +135,13 @@ contract Crowdfunding {
         campaign.pledgedAmount += _amount;
         idsToPledgedAmountByAddress[_campaignId][msg.sender] += _amount;
 
+        emit Pledge(_campaignId, msg.sender, _amount);
+
         IERC20(tokenAddress).safeTransferFrom(
             msg.sender,
             address(this),
             _amount
         );
-
-        emit Pledge(_campaignId, msg.sender, _amount);
     }
 
     /// @notice Unpledge contribution to campaign
@@ -162,9 +162,9 @@ contract Crowdfunding {
         campaign.pledgedAmount -= _amount;
         idsToPledgedAmountByAddress[_campaignId][msg.sender] -= _amount;
 
-        IERC20(tokenAddress).safeTransfer(msg.sender, _amount);
-
         emit Unpledge(_campaignId, msg.sender, _amount);
+
+        IERC20(tokenAddress).safeTransfer(msg.sender, _amount);
     }
 
     //function claim() external {}
@@ -187,8 +187,9 @@ contract Crowdfunding {
         require(pledgerAmount > 0, "No funds to refund");
 
         idsToPledgedAmountByAddress[_campaignId][msg.sender] -= pledgerAmount;
-        IERC20(tokenAddress).safeTransfer(msg.sender, pledgerAmount);
 
         emit Refund(_campaignId, msg.sender, pledgerAmount);
+
+        IERC20(tokenAddress).safeTransfer(msg.sender, pledgerAmount);
     }
 }
