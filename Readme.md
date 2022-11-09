@@ -138,7 +138,7 @@ Configuration can be found at `.github/workflows/tests.yml`
 ## Code Analysis
 
 - Install [slither](https://github.com/crytic/slither)
-- Run `slither ./contracts/Crowdfunding.sol --solc-args "--include-path=./node_modules --base-path=./contracts"`
+- `yarn run slither`
 
 # Contributing
 

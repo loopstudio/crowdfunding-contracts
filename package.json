@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "coverage": "hardhat coverage && yarn istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
     "types": "hardhat typechain",
-    "postinstall": "git config core.hooksPath ./git-hooks"
+    "postinstall": "git config core.hooksPath ./git-hooks",
+    "slither": "slither ./contracts/Crowdfunding.sol --solc-args '--include-path=./node_modules --base-path=./contracts'"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-network-helpers": "^1.0.4",
