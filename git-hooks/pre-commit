@@ -1,3 +1,4 @@
 #!/bin/sh
 yarn run lint
 yarn run lint-contracts
+yarn run slither --fail-medium
