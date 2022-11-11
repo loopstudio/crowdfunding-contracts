@@ -15,3 +15,4 @@ jobs:
       - uses: crytic/slither-action@v0.2.0
         with:
           fail-on: medium
+          node-version: 18
