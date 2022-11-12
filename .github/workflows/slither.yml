@@ -1,12 +1,7 @@
 name: Slither Analysis
 on:
-  pull_request:
-    branches:
-      - "main"
-      - "develop"
-      - /^feature.*/
-      - /^hotfix.*/
-      - /^fix.*/
+  on: [push, pull_request]
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
