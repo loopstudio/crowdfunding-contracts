@@ -9,6 +9,8 @@ import "solidity-coverage";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
 
+import "./tasks/launch";
+
 dotenv.config();
 
 // You need to export an object to set up your config
