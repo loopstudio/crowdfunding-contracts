@@ -1,4 +1,4 @@
-import { ehters, ethers, getNamedAccounts, getUnnamedAccounts, network } from "hardhat";
+import { ethers, getNamedAccounts, getUnnamedAccounts, network } from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 import { Crowdfunding } from "../../typechain-types/contracts/Crowdfunding";
@@ -24,13 +24,11 @@ describe("Crowdfunding: claim", function () {
   });
 
   it("Should revert if campaign not exists", async () => {
-    await expect(
-      crowdfunding.claim(id)
-    ).to.be.revertedWith("Not exists");
+    await expect(crowdfunding.claim(id)).to.be.revertedWith("Not exists");
   });
 
   it("Should revert if sender is not the creator", async () => {
-    let notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
+    const notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
 
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
@@ -51,9 +49,7 @@ describe("Crowdfunding: claim", function () {
     await token.approve(crowdfunding.address, pledge);
     await crowdfunding.pledge(id, pledge);
 
-    await expect(crowdfunding.claim(id)).to.be.revertedWith(
-      "Goal not reached"
-    );
+    await expect(crowdfunding.claim(id)).to.be.revertedWith("Goal not reached");
   });
 
   it("should revert if campaign is still active", async () => {

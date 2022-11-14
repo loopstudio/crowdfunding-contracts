@@ -67,8 +67,8 @@ describe("Crowdfunding: pledge", function () {
 
   it("Should succeed", async () => {
     const { deployer } = await getNamedAccounts();
-    let user = await ethers.getSigner((await getUnnamedAccounts())[0]);
-    token.transfer(user.address, utils.parseEther("20"));
+    const user = await ethers.getSigner((await getUnnamedAccounts())[0]);
+    await token.transfer(user.address, utils.parseEther("20"));
 
     const pledgeTime = moment().add(5, "day");
 

@@ -1,23 +1,21 @@
 import { ethers, getUnnamedAccounts } from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
-import { Crowdfunding } from "../../typechain-types/contracts/Crowdfunding";
 import { expect } from "chai";
 import moment from "moment";
 import { utils } from "ethers";
-import { LoopToken } from "../../typechain-types";
+import { Crowdfunding } from "../../typechain-types";
 import { deployCrowdfundingFixture } from "./fixtures/deploy-crowfunding";
 
 describe("Crowdfunding: cancel", function () {
   let crowdfunding: Crowdfunding;
-  let token: LoopToken;
   const id = 1;
   const amount = utils.parseEther("100");
   const start = moment().add(1, "day");
   const end = moment().add(11, "day");
 
   beforeEach(async function () {
-    ({ crowdfunding, token } = await loadFixture(deployCrowdfundingFixture));
+    ({ crowdfunding } = await loadFixture(deployCrowdfundingFixture));
   });
 
   it("Should revert if campaign not exists", async () => {
@@ -25,7 +23,7 @@ describe("Crowdfunding: cancel", function () {
   });
 
   it("Should revert if not creator", async () => {
-    let notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
+    const notCreator = await ethers.getSigner((await getUnnamedAccounts())[0]);
 
     await crowdfunding.launch(amount, start.unix(), end.unix());
 
