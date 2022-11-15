@@ -8,11 +8,15 @@
     "deploy": "hardhat deploy --network hardhat",
     "deploy-muambai": "hardhat deploy --network muambai",
     "deploy-goerli": "hardhat deploy --network goerli",
-    "lint": "solhint 'contracts/*.sol'",
-    "lint:fix": "solhint 'contracts/**/*.sol' --fix",
+    "lint-contracts": "solhint 'contracts/*.sol'",
+    "lint-contracts:fix": "solhint 'contracts/**/*.sol' --fix",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings=0",
+    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write .",
     "coverage": "hardhat coverage && yarn istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
-    "types": "hardhat typechain"
+    "types": "hardhat typechain",
+    "postinstall": "git config core.hooksPath ./git-hooks",
+    "slither": "slither ./contracts/Crowdfunding.sol --solc-args '--include-path=./node_modules --base-path=./contracts'"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-network-helpers": "^1.0.4",
@@ -36,7 +40,7 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.2.0",
     "ethers": "^5.6.9",
-    "hardhat": "^2.10.1",
+    "hardhat": "^2.12.2",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-gas-reporter": "^1.0.8",
     "moment": "^2.29.4",

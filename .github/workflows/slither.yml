@@ -1,13 +1,7 @@
-name: test-contracts
-
+name: Slither Analysis
 on:
   pull_request:
-    branches:
-      - "main"
-      - "develop"
-      - /^feature.*/
-      - /^hotfix.*/
-      - /^fix.*/
+    types: [opened, synchronize, reopened, ready_for_review]
 
 env:
   GOERLI_URL: ${{ secrets.GOERLI_URL}}
@@ -20,8 +14,11 @@ env:
   COINMARKETCAP_API_KEY: ${{ secrets.COINMARKETCAP_KEY }}
 
 jobs:
-  build:
+  analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn install && yarn run coverage
+      - uses: actions/checkout@v3
+      - uses: crytic/slither-action@v0.2.0
+        with:
+          node-version: 18.12.1
+          fail-on: medium

@@ -65,8 +65,6 @@ Hardhat development boilerplate that enables to:
 - hardhat.config.ts: hardhat configuration file. Currenlty supports `ethereum` and `polygon` networks configuration.
 - helper-hardhat-config.ts: helper file containing information per network, like # of confirmations, Chainlink smart contract addresses and subscriptions.
 
-
-
 ## Getting started
 
 ## Config
@@ -136,6 +134,11 @@ You can execute tasks on the second terminal and see the transactions on the fir
 Each PR made to gitflow standard branches will execute the unit tests using Github Actions.
 
 Configuration can be found at `.github/workflows/tests.yml`
+
+## Code Analysis
+
+- Install [slither](https://github.com/crytic/slither)
+- `yarn run slither`
 
 # Contributing
 
