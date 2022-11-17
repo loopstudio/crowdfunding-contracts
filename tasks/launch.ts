@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 import { utils } from "ethers";
 
 task("launch", "Launch a campaign")
-  .addParam("address", "ERC20 token address.")
+  .addParam("address", "Crowdfunding contract address.")
   .addParam("goal", "Amount of tokens needed to meet the campaign's goal.")
   .addParam("start", "Campaign start date.")
   .addParam("end", "Campaign end date.")
