@@ -10,6 +10,7 @@ import "hardhat-deploy";
 import "hardhat-gas-reporter";
 
 import "./tasks/launch";
+import "./tasks/pledge";
 
 dotenv.config();
 
