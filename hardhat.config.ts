@@ -9,8 +9,11 @@ import "solidity-coverage";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
 
+import "./tasks/transfer";
+import "./tasks/balance-of";
 import "./tasks/launch";
 import "./tasks/pledge";
+import "./tasks/allowance";
 
 dotenv.config();
 
