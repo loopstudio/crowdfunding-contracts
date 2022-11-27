@@ -13,6 +13,7 @@ import "./tasks/transfer";
 import "./tasks/balance-of";
 import "./tasks/launch";
 import "./tasks/pledge";
+import "./tasks/claim";
 import "./tasks/allowance";
 
 dotenv.config();
