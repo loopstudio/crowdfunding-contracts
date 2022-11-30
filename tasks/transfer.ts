@@ -6,13 +6,18 @@ task("transfer", "Transfers a given amount to a specific address")
   .addParam("account", "The account's address")
   .addParam("amount", "The given amount")
   .setAction(async (taskArgs, hre) => {
-    const LoopToken = await hre.ethers.getContractFactory("LoopToken");
-    const loopToken = LoopToken.attach(taskArgs.tokenaddress);
-    const amount = utils.parseEther(taskArgs.amount);
+    const { amount, account, tokenaddress } = taskArgs;
 
-    const transfer = await loopToken.transfer(taskArgs.account, amount);
+    const LoopToken = await hre.ethers.getContractFactory("LoopToken");
+    const loopToken = LoopToken.attach(tokenaddress);
+
+    const transfer = await loopToken.transfer(
+      account,
+      utils.parseEther(amount)
+    );
+
     if (transfer) {
-      console.log("Transaction completed:");
-      console.log("Transferred:", taskArgs.amount, "LT to:", taskArgs.account);
+      console.log(`Transaction completed`);
+      console.log(`Transferred: ${amount} LT to ${account}`);
     }
   });
