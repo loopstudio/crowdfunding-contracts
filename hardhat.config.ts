@@ -43,6 +43,11 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY!, process.env.PRIVATE_KEY_2!],
       chainId: 80001,
     },
+    sepolia: {
+      url: process.env.SEPOLIA_URL || "",
+      accounts: [process.env.PRIVATE_KEY!, process.env.PRIVATE_KEY_2!],
+      chainId: 11155111,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
