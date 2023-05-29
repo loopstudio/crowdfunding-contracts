@@ -8,6 +8,7 @@
     "deploy": "hardhat deploy --network hardhat",
     "deploy-muambai": "hardhat deploy --network muambai",
     "deploy-goerli": "hardhat deploy --network goerli",
+    "deploy-sepolia": "hardhat deploy --network sepolia",
     "lint-contracts": "solhint 'contracts/*.sol'",
     "lint-contracts:fix": "solhint 'contracts/**/*.sol' --fix",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings=0",
@@ -15,7 +16,6 @@
     "format": "prettier --write .",
     "coverage": "hardhat coverage && yarn istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
     "types": "hardhat typechain",
-    "postinstall": "git config core.hooksPath ./git-hooks",
     "slither": "slither ./contracts/Crowdfunding.sol --solc-args '--include-path=./node_modules --base-path=./contracts'"
   },
   "devDependencies": {
