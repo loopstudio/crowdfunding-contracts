@@ -122,6 +122,14 @@ Boilerplate comes with some example tasks:
 
 - Transfer tokens: `npx hardhat transfer --tokenaddress 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --account 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 --amount 0.1 --network localhost`
 
+- Pledge a campaing: `npx hardhat pledge --goal 1 --campaign-id 5 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+
+- Claim funds: `npx hardhat claim --campaign-id 2 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+
+- Launcha campaign: `npx hardhat launch --goal 10 --start 1668864785 --end 1668864966 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+
+- Account allowance: `npx hardhat allowance --amount 100 --tokenaddress 0x5FbDB2315678afecb367f032d93F642f64180aa3 --account 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+
 In order to run them, a contract deploy must be done. Open two consoles and:
 
 1. Run `yarn hardhat node` on first one
