@@ -15,6 +15,7 @@ import "./tasks/launch";
 import "./tasks/pledge";
 import "./tasks/allowance";
 import "./tasks/claim";
+import "./tasks/refund";
 
 dotenv.config();
 
