@@ -118,11 +118,11 @@ This boilerplate uses `typechain` capabilties to prevent errors and ensure corre
 
 Boilerplate comes with some example tasks:
 
-- Get balance of an address: `npx hardhat balance-of --tokenaddress 0x5FbDB2315678afecb367f032d93F642f64180aa3 --account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --network localhost`
+- Get balance of an address: `npx hardhat balance-of --tokenaddress 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --network localhost`
 
-- Transfer tokens: `npx hardhat transfer --tokenaddress 0x5FbDB2315678afecb367f032d93F642f64180aa3 --account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --amount 10 --network localhost`
+- Transfer tokens: `npx hardhat transfer --tokenaddress 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --account 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 --amount 0.1 --network localhost`
 
-- Pledge a campaing: `npx hardhat pledge --goal 5 --campaign-id 1 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+- Pledge a campaing: `npx hardhat pledge --goal 1 --campaign-id 5 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
 
 - Refund a campaing: `npx hardhat refund --campaign-id 1 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
 
