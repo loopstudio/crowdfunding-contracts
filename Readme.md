@@ -122,9 +122,11 @@ Boilerplate comes with some example tasks:
 
 - Transfer tokens: `npx hardhat transfer --tokenaddress 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --account 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 --amount 0.1 --network localhost`
 
-- Pledge a campaing: `npx hardhat pledge --goal 1 --campaign-id 5 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+- Pledge a campaign: `npx hardhat pledge --goal 1 --campaign-id 5 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
 
-- Refund a campaing: `npx hardhat refund --campaign-id 1 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+- Refund a campaign: `npx hardhat refund --campaign-id 1 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
+
+- Cancel a campaign: `npx hardhat cancel --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --campaign-id 1`
 
 - Claim funds: `npx hardhat claim --campaign-id 2 --address 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --network localhost`
 
